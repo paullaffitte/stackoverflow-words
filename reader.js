@@ -16,8 +16,8 @@ var stats = {words: {}, totalWords: 0};
 readStream.on('data', function(chunk) {  
 	data += chunk;
 }).on('end', function() {
+	data = data.substring(0, data.length - 2);
 	data = JSON.parse('[' + data + ']');
-	console.log(data.length + ' entries');
 	for (var i = 0; i < data.length; i++) {
 		var entry = data[i];
 		entry.question = removeSpecialChars(entry.question).trim();
@@ -38,9 +38,12 @@ readStream.on('data', function(chunk) {
 	stats.words.sort(function(a, b) {
 		return a.count - b.count;
 	});
+	var occurences = 0;
 	for (var i = 0; i < stats.words.length; i++) {
 		console.log(stats.words[i].percent + '\t' + stats.words[i].count + '\t' + stats.words[i].word);
+		occurences += stats.words[i].count;
 	}
+	console.log(data.length + ' entries, ', stats.words.length + ' words, ' + occurences + ' occurences');
 }).on('error', function(error) {
 	console.log(error);
 });
